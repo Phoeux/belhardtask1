@@ -26,7 +26,7 @@ SECRET_KEY = 'o2ulf$9+mox(64*r-6kn#!-%%lgbg_46bw@p1!58!=#hs2u!r#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['phoeux-task1.herokuapp.com']
+ALLOWED_HOSTS = ['phoeux-task1.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'managebook',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +84,7 @@ DATABASES = {
         'PASSWORD': os.environ.get('PASSWORD'),
         'HOST': os.environ.get('HOST'),
         'PORT': 5432
+
     }
 }
 
