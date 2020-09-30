@@ -26,10 +26,14 @@
         <h5>Date: {{ c.date }}</h5>
         <h5>Author: {{ c.user }}</h5>
         <h5>Like: {{ c.cashed_like }} </h5>
+<!--        {% for i in '0123456789'|make_list %}-->
+<!--            <a href="{% url 'add_like' like=i book_id=book.id %}"> <i>{{ i }}</i></a>-->
+<!--        {% endfor %}-->
         {% endfor %}
 
         <hr>
     {% endfor %}
+
 
 </body>
 </html>

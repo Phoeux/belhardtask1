@@ -81,8 +81,15 @@ class CommentLike(models.Model):
         Comment, on_delete=models.CASCADE, related_name='comment_like')
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comment_like')
+    like = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
+        # try:
         super().save(*args, **kwargs)
+        # except IntegrityError:
+        #     bl = CommentLike.object.get(user=self.user, comment=self.comment)
+        #     bl.like=self.like
+        #     bl.save()
+        # else:
         self.comment.cached_like = self.comment.comment_like_count()
         self.comment.save()
