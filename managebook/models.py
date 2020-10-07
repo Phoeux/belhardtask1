@@ -1,10 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models, IntegrityError, transaction
 
-# Create your models here.
-
-# class Author(models.Model):
-#     nick_name = models.CharField(max_length=50)
 from django.db.models import Avg
 
 
@@ -53,6 +49,7 @@ class Comment(models.Model):
         User, through='CommentLike', related_name='like', blank=True, null=True)
     cashed_like = models.PositiveIntegerField(default=0)
 
+
 class BookLike(models.Model):
     class Meta:
         unique_together = ['user', 'book']
@@ -81,15 +78,14 @@ class CommentLike(models.Model):
         Comment, on_delete=models.CASCADE, related_name='comment_like')
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comment_like')
-    like = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        # try:
-        super().save(*args, **kwargs)
-        # except IntegrityError:
-        #     bl = CommentLike.object.get(user=self.user, comment=self.comment)
-        #     bl.like=self.like
-        #     bl.save()
-        # else:
-        self.comment.cached_like = self.comment.comment_like_count()
+        try:
+            super().save(*args, **kwargs)
+        except IntegrityError:
+            CommentLike.objects.get(
+                comment_id=self.comment.id, user_id=self.user.id).delete()
+            self.comment.cashed_like -= 1
+        else:
+            self.comment.cashed_like += 1
         self.comment.save()
