@@ -1,7 +1,7 @@
 {% extends 'main_template.html' %}
 
-{% block update_book %}
-<form action="{%  url 'update_comment' book_id=book.id  %}" method="post">
+{% block comment %}
+<form action="{%  url 'update_comment' comment_id=id  %}" method="post">
     {% csrf_token %}
     {{ form }}
     <button type="submit">Ok</button>
