@@ -7,6 +7,7 @@ from managebook import views
 urlpatterns = [
     # path('hello/', cache_page(2)(views.BookView.as_view()), name='hello'),
     path('hello/', views.BookView.as_view(), name='hello'),
+    path('hello/<int:num_page>', views.BookView.as_view(), name='hello_with_num_page'),
     path('add_rate/<int:rate>/<int:book_id>', views.AddRateBook.as_view(), name='add_rate'),
     path('add_like2comment/<int:comment_id>', views.AddLike.as_view(), name='add_like2comment'),
     path('register/', views.RegisterView.as_view(), name='register'),
@@ -18,4 +19,5 @@ urlpatterns = [
     path('update_book/<str:book_slug>', views.UpdateBook.as_view(), name='update_book'),
     path('delete_comment/<int:comment_id>', views.DeleteComment.as_view(), name='delete_comment'),
     path('update_comment/<int:comment_id>', views.UpdateComment.as_view(), name='update_comment'),
+    path('add_like_ajax/', views.AddLikeAjax.as_view())
 ]

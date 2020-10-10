@@ -26,20 +26,20 @@ class TestModel(TestCase):
         BookLike.objects.create(book=book, user=user_2, rate=6)
         self.assertEqual(book.cached_rate, 5)
 
-
     def test_comment_like(self):
         user_1 = User.objects.create(username='user_1')
         user_2 = User.objects.create(username='user_2')
         book = Book.objects.create(text='text', slug='slug')
-        comment = Comment.objects.create(text='text', user=user_1,book=book)
+        comment = Comment.objects.create(text='text', user=user_1, book=book)
         comment.like.add(user_2)
         comment.like.add(user_1)
         comment.save()
         like = comment.like.count()
-        self.assertEqual(like,2)   # coverage run --source='.' manage.py test .
+        self.assertEqual(like, 2)  # coverage run --source='.' manage.py test .
 
 
 class TestViews(TestCase):
+
     def setUp(self):
         self.user = User.objects.create_user(username='Test Name', password='test pwd')
         self.client.force_login(self.user)
@@ -113,10 +113,61 @@ class TestViews(TestCase):
         self.assertEqual(book.text, data['text'])
         self.assertEqual(book.genre.first().title, g2.title)
 
+    # def test_register(self):
+    #     self.client.logout()
+    #     url = reverse('register')
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'register.html')
+    #     data = {'username': 'glebtest',
+    #             'password1': 'qwertyqwerty',
+    #             'password2': 'qwertyqwerty'}
+    #     response = self.client.post(url, data=data)
+    #     self.assertEqual(response.status_code, 302)
+    #     user = User.objects.get(id=2)
+    #     self.assertEqual(user.username, data['username'])
+    #     response = self.client.post(url, data=data)
+    #     self.assertEqual(response.status_code, 302)
 
+    def test_login(self):
+        self.client.logout()
+        url = reverse('login')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'login.html')
+        data = {'username': 'Test Name',
+                'password': 'test pwd'
+                }
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 302)
+    def test_logout(self):
+        url = reverse('logout')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
 
+    def test_add_book(self):
+        url = reverse('add_book')
+        g1 = Genre.objects.create(title='genre 1')
+        g2 = Genre.objects.create(title='genre 2')
+        data = {
+            'title': 'update new title',
+            'text': 'update new text',
+            'genre': ['1', '2']}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code,302)
+        book = Book.objects.first()
+        self.assertEqual(book.title, data['title'])
+        self.assertEqual(book.text, data['text'])
+        arr = [i.title for i in book.genre.all()]
+        self.assertEqual(arr, [g1.title, g2.title])
 
-
-
-
-
+    def test_delete_comment(self): #проверить удаляется ли коммент другим пользователем
+        book = Book.objects.create(text='text', slug='slug')
+        comment = Comment.objects.create(text='text of comment', user=self.user, book=book)
+        url = reverse('delete_comment', args=[comment.id])
+        # data = {
+        #     'title': 'update new title',
+        # }
+        response = self.client.get(url)
+        self.assertEqual(response.status_code,302)
+        self.assertEqual(Comment.objects.count(), 0)

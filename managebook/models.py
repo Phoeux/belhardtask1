@@ -87,6 +87,9 @@ class CommentLike(models.Model):
             CommentLike.objects.get(
                 comment_id=self.comment.id, user_id=self.user.id).delete()
             self.comment.cashed_like -= 1
+            flag = False
         else:
             self.comment.cashed_like += 1
+            flag = True
         self.comment.save()
+        return flag

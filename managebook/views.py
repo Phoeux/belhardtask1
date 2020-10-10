@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.db.models import Count, Q, CharField, Value, OuterRef, Exists, Prefetch
 from django.db.models.functions import Cast
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import cache
 from django.views.decorators.cache import cache_page
@@ -19,22 +20,25 @@ from django.utils.decorators import method_decorator
 
 class BookView(View):
     # @method_decorator(cache_page(5))
-    def get(self, request):
+    def get(self, request, num_page=1):
         response = {'form': CommentForm()}
         if request.user.is_authenticated:
             sub_query_1 = BookLike.objects.filter(user=request.user, book=OuterRef('pk')).values('rate')
             sub_query_2 = Exists(User.objects.filter(id=request.user.id, book=OuterRef('pk')))
             sub_query_3 = Exists(User.objects.filter(id=request.user.id, comment=OuterRef('pk')))
-            comment = Comment.objects.annotate(is_owner=sub_query_3).\
+            sub_query_4 = Exists(User.objects.filter(id=request.user.id, like=OuterRef('pk')))
+            comment = Comment.objects.annotate(is_owner=sub_query_3, is_liked=sub_query_4). \
                 select_related('user').prefetch_related('like')
             comment_prefetch = Prefetch('comment', comment)
             result = Book.objects.annotate(user_rate=Cast(sub_query_1, CharField()),
-                                           is_owner=sub_query_2).\
-                prefetch_related(comment_prefetch, 'author', 'genre')
+                                           is_owner=sub_query_2). \
+                prefetch_related(comment_prefetch, 'author', 'genre', 'rate')
         else:
-             result = Book.objects. \
+            result = Book.objects. \
                 prefetch_related('author', 'genre', 'comment', 'comment__user').all()
-        response['content'] = result
+        pag = Paginator(result, 5)
+        response['content'] = pag.page(num_page)
+        response['count_page'] = list(range(1, pag.num_pages + 1))
         return render(request, 'index.html', response)
 
 
@@ -60,11 +64,11 @@ class RegisterView(View):
     def post(self, request):
         form = CustomUserCreateForm(data=request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            form.save()
+            # login(request, user)
             return redirect('hello')
-        messages.error("This Username is already exists")
-        return redirect("register")
+        messages.error(request, message="This Username is already exists")
+        return redirect("login")
 
 
 class LoginView(View):
@@ -170,3 +174,17 @@ class UpdateComment(View):
         if cf.is_valid():
             cf.save()
         return redirect('hello')
+
+
+class AddLikeAjax(View):
+    def post(self, request):
+        if request.user.is_authenticated:
+            cl_id = request.POST['cl_id'][3:]
+            flag = CommentLike(user=request.user, comment_id=cl_id).save()
+            comment = Comment.objects.get(id=cl_id)
+            return JsonResponse({
+                'ok': True,
+                'count_like': comment.cashed_like,
+                'flag': flag,
+                'user': request.user.username})
+        return JsonResponse({'ok': False})

@@ -85,14 +85,14 @@ WSGI_APPLICATION = 'bookshop.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR,'db.sqlite3'),
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('NAME'),
-        'USER': os.environ.get('USER'),
-        'PASSWORD': os.environ.get('PASSWORD'),
-        'HOST': os.environ.get('HOST'),
-        'PORT': 5432,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR,'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        # 'NAME': os.environ.get('NAME'),
+        # 'USER': os.environ.get('USER'),
+        # 'PASSWORD': os.environ.get('PASSWORD'),
+        # 'HOST': os.environ.get('HOST'),
+        # 'PORT': 5432,
 
     }
 }
@@ -147,6 +147,8 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '871372147885-iop4l64992i7k5c6tht2btump26u8itq.apps.googleusercontent.com' # Google Consumer Key
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '9co0_pFKi-Du8xI-BJ4EyFuR' # Google Consumer Secret
 SOCIAL_AUTH_GITHUB_KEY = '6328933134213f2cacff'
 SOCIAL_AUTH_GITHUB_SECRET = '4449af77867e6e68b07aaaa81b51b76c3d439596'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/shop/hello/'
