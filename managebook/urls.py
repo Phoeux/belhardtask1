@@ -19,5 +19,7 @@ urlpatterns = [
     path('update_book/<str:book_slug>', views.UpdateBook.as_view(), name='update_book'),
     path('delete_comment/<int:comment_id>', views.DeleteComment.as_view(), name='delete_comment'),
     path('update_comment/<int:comment_id>', views.UpdateComment.as_view(), name='update_comment'),
-    path('add_like_ajax/', views.AddLikeAjax.as_view())
+    path('add_like_ajax/', views.AddLikeAjax.as_view()),
+    path('add_rate_ajax/', views.AddRateAjax.as_view()),
+
 ]

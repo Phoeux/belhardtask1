@@ -31,13 +31,11 @@ $('document').ready(function () {
                 if (data['flag']) {
                     $(object_comment).attr('class', 'comment_like fa  fa-star checked ');
                     $(th).append(`<span class='col'>${data['user']}</span>`)
-                    console.log(data['user'], th)
-                }else{
+                } else {
                     $(object_comment).attr('class', 'comment_like fa');
-                    for (var i = 0; i < $(th).children().length(); i++) {
-                        let item = $(th).children().[i];
-                        if($.(item).html() == data['user']){
-                            $(th).children()[i].remove();
+                    for (var i = 0; i < $(th).children().length; i++) {
+                        if($($.(item).children()[i].html == data['user']) {
+                            $(th).children()[i].remove()
                             break
                         }
                     }

@@ -188,3 +188,7 @@ class AddLikeAjax(View):
                 'flag': flag,
                 'user': request.user.username})
         return JsonResponse({'ok': False})
+
+
+class AddRateAjax(View):
+    pass
