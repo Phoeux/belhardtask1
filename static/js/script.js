@@ -20,7 +20,7 @@ const csrftoken = getCookie('csrftoken');
 $('document').ready(function () {
     $('span.comment_like').on('click', function() {
         let cl_id = $(this).attr('id');
-        let object_comment = this
+        let object_comment = this;
         $.ajax({
             url:'/shop/add_like_ajax/',
             data: {'cl_id': cl_id, 'csrfmiddlewaretoken': csrftoken},
@@ -34,8 +34,9 @@ $('document').ready(function () {
                 } else {
                     $(object_comment).attr('class', 'comment_like fa');
                     for (var i = 0; i < $(th).children().length; i++) {
-                        if($($.(item).children()[i].html == data['user']) {
-                            $(th).children()[i].remove()
+                        let item = $(th).children()[i];
+                        if ($(item).html() == data['user']) {
+                            $(th).children()[i].remove();
                             break
                         }
                     }
@@ -43,4 +44,86 @@ $('document').ready(function () {
             }
         });
     });
+
+    $('span.book_rate').on('click', function () {
+    let arr = $(this).attr('id').split('-');
+        let book_id = arr[1];
+        let book_rate = arr[2];
+        let obj = this;
+        $.ajax ({
+            url: '/shop/add_book_rate_ajax/',
+            method: 'post',
+            data: {'book_id': book_id, 'book_rate': book_rate, 'csrfmiddlewaretoken': csrftoken},
+            success:function(data) {
+                let rate = $(obj).parent();
+                let children = $(rate).children();
+                let text = children[0];
+                $(text).html(`Rate: ${data['cached_rate']}`);
+                for (let i = 1; i <= 10; i++){
+                    if (data['rate']  >= i - 1) {
+                       $(children[i]).attr('class', 'book_rate fa fa-star checked')
+                    } else {
+                       $(children[i]).attr('class', 'book_rate fa fa-star')
+                        }
+                }
+                   if (data['flag']){
+                        $(rate).append(`<span>${data['user']}</span>`)
+                        }
+
+            }
+
+        })
+    })
+
+    $('button.delete-comment').on('click', function (){
+        let id = $(this).attr('id').split('-')[1];
+        let obj = this;
+        $.ajax({
+            url: `/shop/delete_comment_ajax/${id}`,
+            method: 'delete',
+            headers: {'X-CSRFToken': csrftoken},
+            success: function (data) {
+                $(obj).parent().remove()
+            }
+        })
+    })
+
+    $('a.add_new_book').on('click', function() {
+        let arr = $(this).parent().children();
+        let title = $(arr[0]).val();
+        let text = $(arr[1]).val();
+        let genre = JSON.stringify($(arr[4]).val());
+        $('modal').modal('toggle');
+        let close = $(this).parent().parent().children()[1];
+//        $(close).trigger('click')
+        $.ajax({
+            url: '/shop/add_new_book_ajax/',
+            method: 'post',
+            data: {
+                'csrfmiddlewaretoken': csrftoken,
+                'title': title,
+                'text': text,
+                'genre': genre},
+            success: function(data) {
+                console.log(data)
+            }
+        }) //append как выше
+    })
+
 });
+
+
+//$('document').ready(function () {
+//    $('span.book_rate').on('click', function () {
+//        let br_id = $(this).attr('id');
+//        $.ajax({
+//            url: '/shop/add_rate_ajax/',
+//            data: {'br_id': br_id, 'csrfmiddlewaretoken': csrftoken},
+//            method: 'post',
+//            success: function (data) {
+//                console.log(data)
+//            }
+//        });
+//    });
+//});
+

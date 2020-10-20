@@ -16,6 +16,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from datetime import datetime
 from django.utils.decorators import method_decorator
+from json import dumps, loads
 
 
 class BookView(View):
@@ -39,20 +40,23 @@ class BookView(View):
         pag = Paginator(result, 5)
         response['content'] = pag.page(num_page)
         response['count_page'] = list(range(1, pag.num_pages + 1))
+        response['book_form'] = BookForm()
         return render(request, 'index.html', response)
 
 
 class AddRateBook(View):
     def get(self, request, rate, book_id):
         if request.user.is_authenticated:
-            BookLike.objects.create(book_id=book_id, rate=rate, user_id=request.user.id)
+            BookLike.objects. \
+                create(book_id=book_id, rate=rate, user_id=request.user.id)
         return redirect('hello')
 
 
 class AddLike(View):
     def get(self, request, comment_id):
         if request.user.is_authenticated:
-            CommentLike.objects.create(comment_id=comment_id, user_id=request.user.id)
+            CommentLike.objects. \
+                create(comment_id=comment_id, user_id=request.user.id)
         return redirect('hello')
 
 
@@ -190,5 +194,32 @@ class AddLikeAjax(View):
         return JsonResponse({'ok': False})
 
 
-class AddRateAjax(View):
-    pass
+class AddBookRateAjax(View):
+    def post(self, request):
+        if request.user.is_authenticated:
+            bl = BookLike(
+                user=request.user, book_id=request.POST['book_id'], rate=request.POST['book_rate'])
+            flag = bl.save()
+            bl.book.refresh_from_db()
+            return JsonResponse({
+                'flag': flag,
+                'cached_rate': bl.book.cached_rate,
+                'rate': bl.rate,
+                'user': request.user.username})
+        return JsonResponse({'ok': False})
+
+
+class DeleteCommentAjax(View):
+    def delete(self, request, comment_id):
+        if request.user.is_authenticated:
+            Comment.objects.filter(id=comment_id, user=request.user).delete()
+        return JsonResponse({'ok': True})
+
+
+class AddNewBookAjax(View):
+    def post(self, request):
+        print(request.POST['title'])
+        print(request.POST['text'])
+        print(loads(request.POST['genre']))
+
+        return JsonResponse({'ok': True})

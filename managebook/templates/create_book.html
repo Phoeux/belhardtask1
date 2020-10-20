@@ -7,12 +7,10 @@
     {{ form.title }}
     {{ form.text.label }}
     {{ form.text }}
-    <p><i>{{ form.text.help_text }}</i>
-    <i>{{ form.genre.label }}</i>
+    <p>{{ form.text.help_text }}</p>
+    <p>{{ form.genre.label }}</p>
     {{ form.genre }}
     <button type="submit">OK</button>
-
-
 </form>
 {% endblock %}
 
