@@ -41,6 +41,7 @@ class BookView(View):
         response['content'] = pag.page(num_page)
         response['count_page'] = list(range(1, pag.num_pages + 1))
         response['book_form'] = BookForm()
+        response['comment_form'] = CommentForm()
         return render(request, 'index.html', response)
 
 
@@ -227,23 +228,19 @@ class AddNewBookAjax(View):
                 b.title += datetime.now().strftime('%Y:%m:%d %H:%M:%S:$f')
                 b.save()
             b.author.add(request.user)
-
-            # b.save()
             for g in loads(request.POST['genre']):
                 req_g = Genre.objects.get(id=g)
                 b.genre.add(req_g)
             b.save()
-
-
-
-
-        #book = BookForm(data=request.POST)
-
-
-
-        print(request.POST['title'])
-        print(request.POST['text'])
-        print(loads(request.POST['genre']))
-
+        # print(request.POST['title'])
+        # print(request.POST['text'])
+        # print(loads(request.POST['genre']))
         return JsonResponse({'ok': True})
 
+class AddNewCommentAjax(View):
+    def post(self, request):
+        if request.user.is_authenticated:
+            book = Book.objects.get(slug=request.POST['slug'])
+            Comment.objects.create(text=request.POST['text'], user=request.user, book=book)
+        # print(request.POST['text'])
+        return JsonResponse({'ok': True})

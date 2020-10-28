@@ -35,6 +35,24 @@ function add_book(form){
     })
 }
 
+function add_comment(form, slug)  {
+    let text = form.text.value;
+
+    console.log(text, slug);
+    $.ajax({
+        url: '/shop/add_new_comment_ajax/',
+        method: 'post',
+        data: {
+            'csrfmiddlewaretoken': csrftoken,
+            'text': text,
+            'slug': slug,
+        },
+        success: function (data) {
+            $('#'+slug).append(`${text}`)
+        }
+    })
+}
+
 
 $('document').ready(function () {
     $('span.comment_like').on('click', function() {
@@ -102,10 +120,10 @@ $('document').ready(function () {
             method: 'delete',
             headers: {'X-CSRFToken': csrftoken},
             success: function (data) {
-                $(obj).parent().remove()
+                $(obj).parent().remove();
             }
         })
-    })
+    });
 
 //    $('a.add_new_book').on('click', function() {
 //        let arr = $(this).parent().children();
