@@ -14,7 +14,44 @@ function getCookie(name) {
 }
 const csrftoken = getCookie('csrftoken');
 
+function add_book(form){
+    let title = form.title.value;
+    let text = form.text.value;
+    let arr_genre = JSON.stringify($(form.genre).val());
+    console.log(title, text, arr_genre);
+    $($(form).children()[6]).trigger('click');
+    $.ajax({
+        url: '/shop/add_new_book_ajax/',
+        method: 'post',
+        data: {
+                'csrfmiddlewaretoken': csrftoken,
+                'title': title,
+                'text': text,
+                'genre': arr_genre
+        },
+        success: function (data) {
+            $('div.book_container').append(`<h1>${title}</h1> <h5>${text}</h5>`)
+        }
+    })
+}
 
+function add_comment(form, slug)  {
+    let text = form.text.value;
+
+    console.log(text, slug);
+    $.ajax({
+        url: '/shop/add_new_comment_ajax/',
+        method: 'post',
+        data: {
+            'csrfmiddlewaretoken': csrftoken,
+            'text': text,
+            'slug': slug,
+        },
+        success: function (data) {
+            $('#'+slug).append(`${text}`)
+        }
+    })
+}
 
 
 $('document').ready(function () {
@@ -83,32 +120,32 @@ $('document').ready(function () {
             method: 'delete',
             headers: {'X-CSRFToken': csrftoken},
             success: function (data) {
-                $(obj).parent().remove()
+                $(obj).parent().remove();
             }
         })
-    })
+    });
 
-    $('a.add_new_book').on('click', function() {
-        let arr = $(this).parent().children();
-        let title = $(arr[0]).val();
-        let text = $(arr[1]).val();
-        let genre = JSON.stringify($(arr[4]).val());
-        $('modal').modal('toggle');
-        let close = $(this).parent().parent().children()[1];
-//        $(close).trigger('click')
-        $.ajax({
-            url: '/shop/add_new_book_ajax/',
-            method: 'post',
-            data: {
-                'csrfmiddlewaretoken': csrftoken,
-                'title': title,
-                'text': text,
-                'genre': genre},
-            success: function(data) {
-                console.log(data)
-            }
-        }) //append как выше
-    })
+//    $('a.add_new_book').on('click', function() {
+//        let arr = $(this).parent().children();
+//        let title = $(arr[0]).val();
+//        let text = $(arr[1]).val();
+//        let genre = JSON.stringify($(arr[4]).val());
+//        $('modal').modal('toggle');
+//        let close = $(this).parent().parent().children()[1];
+////        $(close).trigger('click')
+//        $.ajax({
+//            url: '/shop/add_new_book_ajax/',
+//            method: 'post',
+//            data: {
+//                'csrfmiddlewaretoken': csrftoken,
+//                'title': title,
+//                'text': text,
+//                'genre': genre},
+//            success: function(data) {
+//                console.log(data)
+//            }
+//        }) //append как выше
+//    })
 
 });
 

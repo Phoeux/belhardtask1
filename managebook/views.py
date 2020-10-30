@@ -10,7 +10,7 @@ from django.utils import cache
 from django.views.decorators.cache import cache_page
 from pytils.translit import slugify
 from managebook.forms import BookForm, CommentForm, CustomUserCreateForm, CustomAuthenticationForm
-from managebook.models import BookLike, Book, CommentLike, Comment
+from managebook.models import BookLike, Book, CommentLike, Comment, Genre
 from django.views import View
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
@@ -41,6 +41,7 @@ class BookView(View):
         response['content'] = pag.page(num_page)
         response['count_page'] = list(range(1, pag.num_pages + 1))
         response['book_form'] = BookForm()
+        response['comment_form'] = CommentForm()
         return render(request, 'index.html', response)
 
 
@@ -218,8 +219,28 @@ class DeleteCommentAjax(View):
 
 class AddNewBookAjax(View):
     def post(self, request):
-        print(request.POST['title'])
-        print(request.POST['text'])
-        print(loads(request.POST['genre']))
+        if request.user.is_authenticated:
+            b = Book(title=request.POST['title'], text=request.POST['text'], slug=slugify(request.POST['title']))
+            try:
+                b.save()
+            except IntegrityError:
+                b.slug += datetime.now().strftime('%Y:%m:%d %H:%M:%S:$f')
+                b.title += datetime.now().strftime('%Y:%m:%d %H:%M:%S:$f')
+                b.save()
+            b.author.add(request.user)
+            for g in loads(request.POST['genre']):
+                req_g = Genre.objects.get(id=g)
+                b.genre.add(req_g)
+            b.save()
+        # print(request.POST['title'])
+        # print(request.POST['text'])
+        # print(loads(request.POST['genre']))
+        return JsonResponse({'ok': True})
 
+class AddNewCommentAjax(View):
+    def post(self, request):
+        if request.user.is_authenticated:
+            book = Book.objects.get(slug=request.POST['slug'])
+            Comment.objects.create(text=request.POST['text'], user=request.user, book=book)
+        # print(request.POST['text'])
         return JsonResponse({'ok': True})
