@@ -35,7 +35,7 @@ function add_book(form){
     })
 }
 
-function add_comment(form, slug)  {
+function add_comment(form, slug, id)  {
     let text = form.text.value;
 
     console.log(text, slug);
@@ -45,7 +45,7 @@ function add_comment(form, slug)  {
         data: {
             'csrfmiddlewaretoken': csrftoken,
             'text': text,
-            'slug': slug,
+            'book_id': id,
         },
         success: function (data) {
             $('#'+slug).append(`${text}`)
@@ -90,7 +90,7 @@ $('document').ready(function () {
         $.ajax ({
             url: '/shop/add_book_rate_ajax/',
             method: 'post',
-            data: {'book_id': book_id, 'book_rate': book_rate, 'csrfmiddlewaretoken': csrftoken},
+            data: {'book_id': book_id, 'rate': book_rate, 'csrfmiddlewaretoken': csrftoken},
             success:function(data) {
                 let rate = $(obj).parent();
                 let children = $(rate).children();

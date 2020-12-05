@@ -31,8 +31,8 @@
     {% for book in content %}
         <h1> {{ book.title }} </h1>
         {% if book.is_owner %}
-        <p><a href="{% url 'delete_book' book_id=book.id %}">delete this book</a></p>
-        <p><a href="{% url 'update_book' book_slug=book.slug %}">update this book</a></p>
+        <p><a href="{% url 'delete_book_api' book_id=book.id %}">delete this book</a></p>
+        <p><a href="{% url 'update_book_api' book_slug=book.slug %}">update this book</a></p>
         {% endif %}
         <h5> {{ book.text }} </h5>
 
@@ -97,7 +97,7 @@
 
                 <div id="ex2" class="modal">
                     <p>Put your comment below</p>
-                    <form onsubmit="add_comment(this, '{{ book.slug }}'); return false;">
+                    <form onsubmit="add_comment(this, '{{ book.slug }}', '{{ book.id }}'); return false;">
                     {{ comment_form }}
                     <input type="submit" value="OK">
                     <a rel="modal:close" hidden>Close</a>
