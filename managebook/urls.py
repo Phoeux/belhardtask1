@@ -15,7 +15,7 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('add_book/', views.AddNewBook.as_view(), name='add_book'),
     path('add_comment/<int:book_id>', views.AddComment.as_view(), name='add_comment'),
-    # path('delete_book/<int:book_id>', views.DeleteBook.as_view(), name='delete_book'),
+    path('delete_book/<int:book_id>', views.DeleteBook.as_view(), name='delete_book'),
     path('update_book/<str:book_slug>', views.UpdateBook.as_view(), name='update_book'),
     path('delete_comment/<int:comment_id>', views.DeleteComment.as_view(), name='delete_comment'),
     path('update_comment/<int:comment_id>', views.UpdateComment.as_view(), name='update_comment'),
@@ -25,6 +25,7 @@ urlpatterns = [
     path('add_new_book_ajax/', views.AddNewBookAjax.as_view(), name='add_new_book_ajax'),
     path('add_new_comment_ajax/', views.AddNewCommentAjax.as_view()),
     path('com_list_api/', views.CommentListApi.as_view()),
+    path('book_list_api/', views.BookListApi.as_view()),
     path('delete_book_api/<int:book_id>', views.DeleteBookAPI.as_view(), name='delete_book_api'),
     path('update_book/<str:book_slug>', views.UpdateBookAPI.as_view(), name='update_book_api'),
 

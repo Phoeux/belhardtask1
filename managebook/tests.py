@@ -217,11 +217,26 @@ class TestBook(APITestCase):
 
     def test_delete(self):
         self.client.force_login(self.user)
-        book = Book.objects.create(title='testbook', text='testtext')
+        Genre.objects.create(title='testgenre')
+
+        # book = Book.objects.create(title='testbook', text='testtext')
+        # book.author.add(self.user)
+        # book.save()
+
+        url = reverse('add_new_book_ajax')
+        data = {
+            'title': 'test title',
+            'text': 'test text',
+            'user': 1,
+            'genre': [1]
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         count_book = Book.objects.all().count()
         self.assertEqual(count_book, 1)
 
-        url = reverse('delete_book_api', kwargs={'book_id': book.id})
+        url = reverse('delete_book_api', kwargs={'book_id': Book.objects.all()[0].id})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         count_book = Book.objects.all().count()

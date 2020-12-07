@@ -406,3 +406,11 @@ class CommentListApi(ListAPIView):
     class Meta:
         model = Comment
         fields = '__all__'
+
+class BookListApi(ListAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects
+
+    class Meta:
+        model = Book
+        fields = '__all__'
