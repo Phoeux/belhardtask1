@@ -5,6 +5,8 @@ from django.db import transaction
 from django.db.models import Avg
 from django.test import TestCase
 from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase, APIClient
 
 from managebook.models import Book, BookLike, Comment, Genre
 from django.contrib.auth.models import User
@@ -176,24 +178,51 @@ from selenium.webdriver import Chrome
 #         self.assertEqual(response.status_code,302)
 #         self.assertEqual(Comment.objects.count(), 0)
 
-class TestBySelenium(StaticLiveServerTestCase):
+# class TestBySelenium(StaticLiveServerTestCase):
+#     def setUp(self):
+#         user_1 = User.objects.create_user(username="test_name1")
+#         user_2 = User.objects.create_user(username="test_name2")
+#         genre_1 = Genre.objects.create(title="testgenre1")
+#         genre_2 = Genre.objects.create(title="testgenre2")
+#         book = Book.objects.create(title="test title", text="test text")
+#         book.author.add(user_1)
+#         book.author.add(user_2)
+#         book.genre.add(genre_1)
+#         book.genre.add(genre_2)
+#         book.save()
+#
+#     def test_one(self):
+#         driver = Chrome()
+#         driver.get(self.live_server_url + reverse("hello"))
+#         sleep(5)
+#         authors = driver.find_element_by_xpath("/html/body/div/div/h5[3]").text
+#         self.assertEqual(authors, "Authors: test_name1 test_name2")
+
+class TestBook(APITestCase):
     def setUp(self):
-        user_1 = User.objects.create_user(username="test_name1")
-        user_2 = User.objects.create_user(username="test_name2")
-        genre_1 = Genre.objects.create(title="testgenre1")
-        genre_2 = Genre.objects.create(title="testgenre2")
-        book = Book.objects.create(title="test title", text="test text")
-        book.author.add(user_1)
-        book.author.add(user_2)
-        book.genre.add(genre_1)
-        book.genre.add(genre_2)
-        book.save()
+        self.user = User.objects.create_user(username='Test Name', password='test pwd')
 
-    def test_one(self):
-        driver = Chrome()
-        driver.get(self.live_server_url + reverse("hello"))
-        sleep(5)
-        authors = driver.find_element_by_xpath("/html/body/div/div/h5[3]").text
-        self.assertEqual(authors, "Authors: test_name1 test_name2")
+    def test_create(self):
+        self.client.force_login(self.user)
+        Genre.objects.create(title='testgenre')
+        url = reverse('add_new_book_ajax')
+        data = {
+            'title': 'test title',
+            'text': 'text',
+            'user': 1,
+            'genre': [1]
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_delete(self):
+        self.client.force_login(self.user)
+        book = Book.objects.create(title='testbook', text='testtext')
+        count_book = Book.objects.all().count()
+        self.assertEqual(count_book, 1)
 
+        url = reverse('delete_book_api', kwargs={'book_id': book.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        count_book = Book.objects.all().count()
+        self.assertEqual(count_book, 0)
