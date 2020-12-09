@@ -201,6 +201,8 @@ from selenium.webdriver import Chrome
 class TestBook(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='Test Name', password='test pwd')
+        Genre.objects.create(title='test_genre1')
+        Genre.objects.create(title='test_genre2')
 
     def test_create(self):
         self.client.force_login(self.user)
@@ -214,6 +216,7 @@ class TestBook(APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Book.objects.exists(), 1)
 
     def test_delete(self):
         self.client.force_login(self.user)
@@ -233,11 +236,62 @@ class TestBook(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        count_book = Book.objects.all().count()
-        self.assertEqual(count_book, 1)
+        # count_book = Book.objects.all().count()
+        self.assertEqual(Book.objects.exists(), 1)
 
-        url = reverse('delete_book_api', kwargs={'book_id': Book.objects.all()[0].id})
+        url = reverse('delete_book_api', kwargs={'book_id': Book.objects.first().id})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        count_book = Book.objects.all().count()
-        self.assertEqual(count_book, 0)
+        # count_book = Book.objects.all().count()
+        count_book_exists = Book.objects.exists()
+        self.assertEqual(count_book_exists, 0) # как проверить, не думаю что это работает и не уверен что книга удаляется
+        # self.assertEqual(count_book, 0)
+
+    # exists, assertequal
+    def test_list(self):
+        self.client.force_login(self.user)
+
+        url = reverse('add_new_book_ajax')
+        data1 = {
+            'title': 'testtitle',
+            'text': 'testtext',
+            'user': 1,
+            'genre': [1, 2]
+        }
+        data2 = {
+            'title': 'testtitle2',
+            'text': 'testtext2',
+            'user': 1,
+            'genre': [1]
+        }
+        response = self.client.post(url, data1, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(url, data2, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = reverse('book_list_api')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()[0]['title'], 'testtitle')
+        self.assertEqual(response.json()[1]['text'], 'testtext2')
+
+    def test_update(self):
+        self.client.force_login(self.user)
+
+        url = reverse('add_new_book_ajax')
+        data = {
+            'title': 'test_title',
+            'text': 'test_text',
+            'user': 1,
+            'genre': [1]
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = reverse('update_book_api', kwargs={'book_slug': Book.objects.first().slug})
+        data = {
+            'title': 'updated_title'
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
