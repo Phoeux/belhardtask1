@@ -27,6 +27,6 @@ urlpatterns = [
     path('com_list_api/', views.CommentListApi.as_view()),
     path('book_list_api/', views.BookListApi.as_view(), name='book_list_api'),
     path('delete_book_api/<int:book_id>', views.DeleteBookAPI.as_view(), name='delete_book_api'),
-    path('update_book_api/<str:book_slug>', views.UpdateBookAPI.as_view(), name='update_book_api'),
+    path('update_book_api/<str:slug>', views.UpdateBookAPI.as_view(), name='update_book_api'),
 
 ]

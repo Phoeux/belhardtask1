@@ -46,7 +46,7 @@ class CustomCommentSerializer(Serializer):
 class BookSerializer(ModelSerializer):
     class Meta:
         model = Book
-        fields = '__all__'
+        fields = ['id', 'title', 'text', 'author', 'genre']
 
 
 class GenreSerializer(ModelSerializer):

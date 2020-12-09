@@ -147,16 +147,16 @@ class DeleteBookAPI(DestroyAPIView):
 
 
 class UpdateBook(View):
-    def get(self, request, book_slug):
+    def get(self, request, book_id):
         if request.user.is_authenticated:
-            book = Book.objects.get(slug=book_slug)
+            book = Book.objects.get(id=book_id)
             if request.user in book.author.all():
                 bf = BookForm(instance=book)
-                return render(request, 'update_book.html', {'form': bf, 'slug': book.slug})
+                return render(request, 'update_book.html', {'form': bf, 'id': book.id})
         return redirect('hello')
 
-    def post(self, request, book_slug):
-        book = Book.objects.get(slug=book_slug)
+    def post(self, request, book_id):
+        book = Book.objects.get(id=book_id)
         bf = BookForm(instance=book, data=request.POST)
         if bf.is_valid():
             bf.save()
@@ -165,10 +165,8 @@ class UpdateBook(View):
 
 class UpdateBookAPI(UpdateAPIView):
     serializer_class = BookSerializer
-
-    def get_object(self):
-        Book.objects.get(slug=self.kwargs.get('book_slug'))
-        return Response({'ok': True}, status=status.HTTP_201_CREATED)
+    lookup_field = "slug"
+    queryset = Book.objects
 
 
 class AddComment(View):
@@ -350,7 +348,7 @@ class AddNewBookAjax(CreateAPIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return Response({'ok': True}, status=status.HTTP_201_CREATED)
+            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

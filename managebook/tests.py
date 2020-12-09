@@ -244,7 +244,7 @@ class TestBook(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         # count_book = Book.objects.all().count()
         count_book_exists = Book.objects.exists()
-        self.assertEqual(count_book_exists, 0) # как проверить, не думаю что это работает и не уверен что книга удаляется
+        self.assertFalse(count_book_exists) # как проверить, не думаю что это работает и не уверен что книга удаляется
         # self.assertEqual(count_book, 0)
 
     # exists, assertequal
@@ -272,7 +272,7 @@ class TestBook(APITestCase):
         url = reverse('book_list_api')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()[0]['title'], 'testtitle')
+        self.assertEqual(Book.objects.first().title, 'testtitle')
         self.assertEqual(response.json()[1]['text'], 'testtext2')
 
     def test_update(self):
@@ -288,10 +288,11 @@ class TestBook(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        url = reverse('update_book_api', kwargs={'book_slug': Book.objects.first().slug})
-        data = {
+        url = reverse('update_book_api', kwargs={'slug': Book.objects.first().slug})
+        data_upd = {
             'title': 'updated_title'
         }
-        response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.patch(url, data_upd, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK, msg=response.data)
+        self.assertEqual(response.data['title'], 'updated_title')
 
