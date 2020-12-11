@@ -166,7 +166,7 @@ class UpdateBook(View):
 class UpdateBookAPI(UpdateAPIView):
     serializer_class = BookSerializer
     lookup_field = "slug"
-    queryset = Book.objects
+    queryset = Book.objects.all()
 
 
 class AddComment(View):
