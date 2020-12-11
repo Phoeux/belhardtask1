@@ -34,11 +34,14 @@ jobs:
     - name: Test with pytest
       run: |
         python manage.py test
-  
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
     - uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.DEPLOY_SERVER_HOST }}
         username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
         key: ${{ secrets.DEPLOY_SERVER_KEY }}
-        run: |
+        script: |
           git pull
