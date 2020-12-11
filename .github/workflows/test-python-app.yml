@@ -47,7 +47,7 @@ jobs:
       # Setup key
       - run: set -eu
       - run: mkdir "$HOME/.ssh"
-      - run: echo "${{ secret.DEPLOY_SERVER_KEY }}" > "$HOME/.ssh/key"
+      - run: echo "${{ secret.KEY}}" > "$HOME/.ssh/key"
       - run: chmod 600 "$HOME/.ssh/key"
       # Build
       - run: npm ci
@@ -58,12 +58,12 @@ jobs:
   
   
   
-  deploy2:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.DEPLOY_SERVER_HOST }}
-        username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
-        key: ${{ secrets.DEPLOY_SERVER_KEY }}
-        run: git pull
+#   deploy2:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: appleboy/scp-action@master
+#       with:
+#         host: ${{ secrets.DEPLOY_SERVER_HOST }}
+#         username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+#         key: ${{ secrets.DEPLOY_SERVER_KEY }}
+#         run: git pull
