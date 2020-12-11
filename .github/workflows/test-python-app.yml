@@ -42,7 +42,7 @@ jobs:
     - name: testing google servive cloud server ssh connection
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ DEPLOY_SERVER_HOST }}
+        host: 35.232.203.142
         username: ${{ DEPLOY_SERVER_USERNAME }}
         key: ${{ secrets.KEY }}
         port: 22
