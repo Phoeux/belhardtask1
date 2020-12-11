@@ -47,7 +47,6 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           cd belhardtask1
-          git fetch
-          git reset
+          git pull origin master
           git status
 
