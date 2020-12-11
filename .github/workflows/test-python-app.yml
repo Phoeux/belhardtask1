@@ -45,7 +45,8 @@ jobs:
         host: ${{ secrets.DEPLOY_SERVER_HOST }}
         username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
         key: ${{ secrets.KEY }}
-        run: |
+        script: |
           cd belhardtask1
           git pull
+          git add
           git status
