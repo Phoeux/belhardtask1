@@ -58,12 +58,13 @@ jobs:
   
   
   
-#   deploy2:
-#     runs-on: ubuntu-latest
-#     steps:
-#     - uses: appleboy/scp-action@master
-#       with:
-#         host: ${{ secrets.DEPLOY_SERVER_HOST }}
-#         username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
-#         key: ${{ secrets.DEPLOY_SERVER_KEY }}
-#         run: git pull
+  deploy2:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.DEPLOY_SERVER_HOST }}
+        username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+        key: ${{ secrets.DEPLOY_SERVER_KEY }}
+        source: "belhardtask1"
+        target: "belhardtask12"
