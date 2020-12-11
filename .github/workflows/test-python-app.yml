@@ -35,14 +35,15 @@ jobs:
         python manage.py test
         
   deploy_job:
+    needs: [test_job]
     name: Deploy
     runs-on: ubuntu-latest
     steps:
     - name: testing google servive cloud server ssh connection
       uses: appleboy/ssh-action@master
       with:
-        host: 35.232.203.142
-        username: gleb
+        host: ${{ DEPLOY_SERVER_HOST }}
+        username: ${{ DEPLOY_SERVER_USERNAME }}
         key: ${{ secrets.KEY }}
         port: 22
         script: |
