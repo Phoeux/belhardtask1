@@ -47,7 +47,7 @@ jobs:
       # Setup key
       - run: set -eu
       - run: mkdir "$HOME/.ssh"
-      - run: echo "${{ secret.key }}" > "$HOME/.ssh/key"
+      - run: echo "${{ secret.DEPLOY_SERVER_KEY }}" > "$HOME/.ssh/key"
       - run: chmod 600 "$HOME/.ssh/key"
       # Build
       - run: npm ci
