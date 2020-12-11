@@ -47,7 +47,7 @@ class BookView(View):
         else:
             result = Book.objects. \
                 prefetch_related('author', 'genre', 'comment', 'comment__user').all()
-        pag = Paginator(result, 3)
+        pag = Paginator(result, 5)
         response['content'] = pag.page(num_page)
         response['count_page'] = list(range(1, pag.num_pages + 1))
         response['book_form'] = BookForm()
