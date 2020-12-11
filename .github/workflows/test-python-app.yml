@@ -42,10 +42,9 @@ jobs:
     - name: testing google servive cloud server ssh connection
       uses: appleboy/ssh-action@master
       with:
-        host: $ {{ secrets.DEPLOY_SERVER_HOST }}
+        host: ${{ secrets.DEPLOY_SERVER_HOST }}
         username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
         key: ${{ secrets.KEY }}
-        port: 22
         script: |
           cd belhardtask1
           git pull origin master
