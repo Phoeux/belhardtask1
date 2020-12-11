@@ -36,24 +36,24 @@ jobs:
         python manage.py test
   
   
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      # Setup key
-      - run: set -eu
-      - run: mkdir "$HOME/.ssh"
-      - run: echo "${{ secret.KEY}}" > "$HOME/.ssh/key"
-      - run: chmod 600 "$HOME/.ssh/key"
-      # Build
-      - run: npm ci
-      - run: npm build
-      # Deploy
-      - run: git pull
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Set up Python 3.8
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: 3.8
+#       # Setup key
+#       - run: set -eu
+#       - run: mkdir "$HOME/.ssh"
+#       - run: echo "${{ secret.KEY}}" > "$HOME/.ssh/key"
+#       - run: chmod 600 "$HOME/.ssh/key"
+#       # Build
+#       - run: npm ci
+#       - run: npm build
+#       # Deploy
+#       - run: git pull
   
   
   
