@@ -47,7 +47,6 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           cd belhardtask1
-          sudo touch file.txt
           sudo git pull
           git status
 
