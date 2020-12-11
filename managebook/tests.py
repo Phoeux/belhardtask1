@@ -286,7 +286,7 @@ class TestBook(APITestCase):
             'genre': [1]
         }
         response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         url = reverse('update_book_api', kwargs={'slug': Book.objects.first().slug})
         data_upd = {
