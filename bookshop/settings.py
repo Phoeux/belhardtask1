@@ -26,7 +26,7 @@ SECRET_KEY = 'o2ulf$9+mox(64*r-6kn#!-%%lgbg_46bw@p1!58!=#hs2u!r#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['phoeux-task1.herokuapp.com', '127.0.0.1', '35.232.203.142']
+ALLOWED_HOSTS = ['phoeux-task1.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
