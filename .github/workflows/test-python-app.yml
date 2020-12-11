@@ -68,5 +68,5 @@ jobs:
         username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
         key: ${{ secrets.DEPLOY_SERVER_KEY }}
         port: ${{ secrets.PORT }}
-        source: "tests/a.txt,tests/b.txt"
-        target: "test"
+        source: "github/belhardtask1"
+        target: "belhardtask1"
