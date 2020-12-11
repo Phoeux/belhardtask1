@@ -47,11 +47,7 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           cd belhardtask1
-          git pull origin master
+          git fetch
+          git reset
           git status
-          mix deps.get --only prod
-          MIX_ENV=prod mix compile
-          MIX_ENV=prod mix ecto.migrate
-          npm run deploy --prefix ./assets
-          mix phx.digest
-          MIX_ENV=prod mix release --overwrite
+
